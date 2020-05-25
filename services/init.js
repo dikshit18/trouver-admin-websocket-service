@@ -48,6 +48,7 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
       connectionId,
       clientMessage.sessionId || sessionId
     );
+    console.log("Connection details saved");
     await postToClient(connectionId, clientMessage);
   } catch (error) {
     if (error.code === "GoneException")
