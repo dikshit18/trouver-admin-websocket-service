@@ -14,7 +14,7 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
     const sessionDetails = await fetchSessionDetails(sessionId);
     if (!sessionDetails) {
       console.log(`SessionId ${sessionId} not found.`);
-      //callback({ statusCode: 401, body: "Unauthorized" }, null);
+      callback({ statusCode: 401, body: "Unauthorized" }, null);
     }
     const { refreshToken, created } = sessionDetails.Item;
 

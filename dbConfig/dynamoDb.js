@@ -75,6 +75,19 @@ const dynamoDb = (() => {
           }
         });
       });
+    },
+    batchWrite: params => {
+      return new Promise((res, rej) => {
+        documentClient.batchWrite(params, (err, data) => {
+          if (err) {
+            console.log("Error while batch writing items... ", err);
+            rej(err);
+          } else {
+            console.log("Succesfully batch written items... ", data);
+            res(data);
+          }
+        });
+      });
     }
   };
 })();

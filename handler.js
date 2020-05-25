@@ -23,6 +23,8 @@ exports.handler = function(event, context, callback) {
     case "init":
       init(connectionId, authorization, sessionId, callback);
       break;
+    case "logout":
+      break;
     case "$disconnect":
       //Not to be called by AWS as it is not gauranteed
       break;
