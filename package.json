@@ -18,7 +18,10 @@
   "homepage": "https://github.com/dikshit18/trouver-admin-websocket-service#readme",
   "dependencies": {
     "aws-sdk": "^2.676.0",
-    "jsonwebtoken": "^8.5.1"
+    "dotenv": "^8.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.26.0",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {},
   "keywords": []

@@ -62,6 +62,19 @@ const dynamoDb = (() => {
           }
         });
       });
+    },
+    delete: params => {
+      return new Promise((res, rej) => {
+        documentClient.delete(params, (err, data) => {
+          if (err) {
+            console.log("Error while deleting item... ", err);
+            rej(err);
+          } else {
+            console.log("Succesfully deleted item... ", data);
+            res(data);
+          }
+        });
+      });
     }
   };
 })();
