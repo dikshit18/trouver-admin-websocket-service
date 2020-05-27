@@ -13,5 +13,6 @@ const getAllSessions = async email => {
       ":rkey": 2015
     }
   };
+  //To be done yet
   const sessions = await dynamoDb.query(params);
 };
