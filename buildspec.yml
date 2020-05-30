@@ -1,0 +1,43 @@
+version: 0.1
+env:
+  variables:
+    ADMIN_TABLE: admin-service
+    ADMIN_SESSIONS_TABLE: admin-service-sessions
+    LAMBDA_FUNCTION_NAME: admin-service-function
+    WEB_SOCKET_ENDPOINT: https://x15lra2p45.execute-api.ap-south-1.amazonaws.com/dev
+    ADMIN_WS_CONNECTION_TABLE: admin-service-websocket-connections
+  parameter-store:
+    USERPOOL_ID: "/dev/USER_POOL_ID"
+    USERPOOL_CLIENT_ID: "/dev/USER_POOL_CLIENTID"
+    AWS_ACCESS_KEY: "/account/AWS_ACCESS_KEY_ID"
+    AWS_ACCESS_SECRET: "/account/AWS_ACCESS_KEY_SECRET"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      - npm install
+  pre_build:
+    commands:
+      - echo Staring the pre build stage
+      - touch .env
+      - echo "USER_POOL_ID=$USERPOOL_ID" >> .env
+      - echo "USER_POOL_CLIENT_ID=$USERPOOL_CLIENT_ID" >> .env
+      - echo "ADMIN_TABLE=$ADMIN_TABLE" >> .env
+      - echo "ADMIN_SESSIONS_TABLE=$ADMIN_SESSIONS_TABLE" >> .env
+      - echo "AWS_ACCESS_KEY=$AWS_ACCESS_KEY" >> .env
+      - echo "AWS_ACCESS_SECRET=$AWS_ACCESS_SECRET" >> .env
+  build:
+    commands:
+      - echo zipping lambda code
+      - zip -r lambda_code.zip . -x ".git/*"
+      - echo zipped lambda code
+      - ls -lrth
+      - echo uploading lambda code
+      - aws s3 cp lambda_code.zip s3://codebuild-trouver/
+      - echo uploaded lambda code
+  post_build:
+    commands:
+      - echo deploying lambda function
+      - aws lambda update-function-code --function-name  $LAMBDA_FUNCTION_NAME --s3-bucket codebuild-trouver --s3-key lambda_code.zip
