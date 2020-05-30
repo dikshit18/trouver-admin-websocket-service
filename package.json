@@ -20,6 +20,7 @@
     "aws-sdk": "^2.676.0",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.3",
     "moment": "^2.26.0",
     "uuid": "^8.1.0"
   },
