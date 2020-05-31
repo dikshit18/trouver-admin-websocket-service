@@ -28,6 +28,8 @@ exports.handler = function(event, context, callback) {
       init(connectionId, authorization, sessionId, callback);
       break;
     case "logout":
+      const parsedBody = JSON.parse(body);
+      const { sessionId, authorization } = parsedBody;
       logout();
       break;
     case "$disconnect":

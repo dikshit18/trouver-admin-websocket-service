@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 exports.verifyTokenAsync = async token => {
-  console.log("token.. ", token);
-
   const secretKey = process.env.SIGNATURE_VALIDATION_KEY;
   return new Promise((resolve, reject) => {
     jwt.verify(token, secretKey, (error, decoded) => {
@@ -11,4 +9,10 @@ exports.verifyTokenAsync = async token => {
       resolve(decoded);
     });
   });
+};
+
+exports.emailFromToken = idToken => {
+  const decodedToken = jwt.decode(idToken);
+  console.log("DecodedToken... ", decodedToken);
+  return decodedToken.email;
 };

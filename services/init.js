@@ -5,6 +5,7 @@ var jwt = require("jsonwebtoken");
 const { postToClient } = require("./postToClient");
 const { dynamoDb } = require("../dbConfig/dynamoDb");
 const { cognito } = require("../cognitoConfig/cognito");
+const { emailFromToken } = require("../utils/auth");
 //const moment = require("moment");
 exports.init = async (connectionId, authorization, sessionId, callback) => {
   try {
@@ -25,7 +26,8 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
       .asMinutes();
     const email = emailFromToken(authorization);
     console.log("Time difference is... ", timeDifference);
-    if (timeDifference < 5) {
+    if (timeDifference < 10) {
+      //Condition for refreshing.
       console.log("Refreshing sessions now");
       const tokens = await generateNewTokens(refreshToken);
       console.log(tokens);
@@ -43,16 +45,16 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
         refreshToken
       );
       await deleteExpiredSession(sessionId);
+      delete clientMessage.tokens.AccessToken;
+      delete clientMessage.tokens.ExpiresIn;
+      delete clientMessage.tokens.TokenType;
     }
     await saveConnectionDetails(
       email,
       connectionId,
       clientMessage.sessionId || sessionId
     );
-    delete clientMessage.tokens.AccessToken;
-    delete clientMessage.tokens.ExpiresIn;
-    delete clientMessage.tokens.TokenType;
-    await postToClient(connectionId, clientMessage);
+    await postToClient(connectionId, clientMessage); //Send only to the corresponding connectionID
   } catch (error) {
     if (error.code === "GoneException")
       await deleteInvalidConnection(connectionId);
@@ -107,12 +109,6 @@ const saveConnectionDetails = async (email, connectionId, sessionId) => {
 
 const generateNewTokens = async refreshToken => {
   return await cognito.refreshTokens(refreshToken);
-};
-
-const emailFromToken = idToken => {
-  const decodedToken = jwt.decode(idToken);
-  console.log("DecodedToken... ", decodedToken);
-  return decodedToken.email;
 };
 
 const pushNewSession = async (
