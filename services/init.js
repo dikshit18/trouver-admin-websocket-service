@@ -21,25 +21,26 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
     const currentTime = moment();
     const expiryTime = moment(created).add(1, "hour");
     const timeDifference = moment
-      .duration(currentTime.diff(expiryTime))
+      .duration(expiryTime.diff(currentTime))
       .asMinutes();
     const email = emailFromToken(authorization);
+    console.log("Time difference is... ", timeDifference);
     if (timeDifference < 5) {
       console.log("Refreshing sessions now");
       const tokens = await generateNewTokens(refreshToken);
       console.log(tokens);
       clientMessage["tokens"] = tokens;
       clientMessage["sessionId"] = uuidv4();
-      client["sessionStatus"] = "new";
+      clientMessage["sessionStatus"] = "new";
       await pushNewSession(
         clientMessage.sessionId,
-        clientMessage.tokens.accessToken,
+        clientMessage.tokens.AccessToken,
         moment()
           .utc()
           .format(),
         email,
-        clientMessage.tokens.idToken,
-        clientMessage.tokens.refreshToken
+        clientMessage.tokens.IdToken,
+        refreshToken
       );
       await deleteExpiredSession(sessionId);
     }
@@ -48,15 +49,16 @@ exports.init = async (connectionId, authorization, sessionId, callback) => {
       connectionId,
       clientMessage.sessionId || sessionId
     );
-    console.log("Connection details saved");
+    delete clientMessage.tokens.AccessToken;
+    delete clientMessage.tokens.ExpiresIn;
+    delete clientMessage.tokens.TokenType;
     await postToClient(connectionId, clientMessage);
   } catch (error) {
     if (error.code === "GoneException")
       await deleteInvalidConnection(connectionId);
   }
   return callback(null, {
-    statusCode: 200,
-    body: JSON.stringify("connected")
+    statusCode: 200
   });
 };
 

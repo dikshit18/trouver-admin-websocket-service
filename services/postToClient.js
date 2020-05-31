@@ -1,10 +1,10 @@
 require("dotenv").config();
 const AWS = require("aws-sdk");
-AWS.config.update({
-  region: "ap-south-1",
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
-});
+// AWS.config.update({
+//   region: "ap-south-1",
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+// });
 const apigwManagementApi = new AWS.ApiGatewayManagementApi({
   apiVersion: "2018-11-29",
   endpoint: process.env.WEB_SOCKET_ENDPOINT,

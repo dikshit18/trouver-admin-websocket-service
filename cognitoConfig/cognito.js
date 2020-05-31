@@ -1,10 +1,10 @@
 const AWS = require("aws-sdk");
 require("dotenv").config();
-AWS.config.update({
-  region: "ap-south-1",
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
-});
+// AWS.config.update({
+//   region: "ap-south-1",
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+// });
 const cognitoClient = new AWS.CognitoIdentityServiceProvider({
   apiVersion: "2016-04-18"
 });

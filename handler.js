@@ -8,22 +8,23 @@ exports.handler = function(event, context, callback) {
   const connectionId = event.requestContext.connectionId;
   const { routeKey } = event.requestContext;
   const { body } = event;
-  const parsedBody = JSON.parse(body);
-  const { sessionId, authorization } = parsedBody;
-  if (!authorization) {
-    callback(
-      {
-        statusCode: 401,
-        body: "Unauthorized"
-      },
-      null
-    );
-  }
+
+  // if (!authorization) {
+  //   callback(
+  //     {
+  //       statusCode: 401,
+  //       body: "Unauthorized"
+  //     },
+  //     null
+  //   );
+  // }
   switch (routeKey) {
     case "$connect":
       connect(callback);
       break;
     case "init":
+      const parsedBody = JSON.parse(body);
+      const { sessionId, authorization } = parsedBody;
       init(connectionId, authorization, sessionId, callback);
       break;
     case "logout":
