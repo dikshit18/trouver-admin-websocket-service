@@ -30,7 +30,7 @@ exports.handler = function(event, context, callback) {
     case "logout":
       const parsedBody = JSON.parse(body);
       const { sessionId, authorization } = parsedBody;
-      logout();
+      logout(sessionId);
       break;
     case "$disconnect":
       //Not to be called by AWS as it is not gauranteed

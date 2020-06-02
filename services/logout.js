@@ -3,9 +3,9 @@ const { dynamoDb } = require("../dbConfig/dynamoDb");
 const { postToClient } = require("./postToClient");
 const { emailFromToken } = require("../utils/auth");
 
-exports.logout = async authorization => {
-  const email = emailFromToken(authorization);
-  const connectionIds = await getConnectionIds(email);
+exports.logout = async sessionId => {
+  //const email = emailFromToken(authorization);
+  const connectionIds = await getConnectionIds(sessionId);
   const message = { dispatch: "logout" };
   for (const id of connectionIds) {
     try {
@@ -18,24 +18,24 @@ exports.logout = async authorization => {
   }
 };
 
-const getConnectionIds = async email => {
+const getConnectionIds = async sessionId => {
   const params = {
     TableName: process.env.ADMIN_WS_CONNECTION_TABLE,
-    KeyConditionExpression: "email = :email",
+    KeyConditionExpression: "sessionId = :sessionId",
     ExpressionAttributeValues: {
-      ":email": email
+      ":sessionId": sessionId
     },
+    IndexName: "sessionId-connectionId-index",
     ProjectionExpression: "connectionId"
   };
   const sessions = await dynamoDb.query(params);
   return sessions.Items.map(session => session.connectionId);
 };
 
-const deleteInvalidConnections = async (id, email) => {
+const deleteInvalidConnections = async id => {
   const params = {
     TableName: process.env.ADMIN_WS_CONNECTION_TABLE,
     Key: {
-      email,
       connectionId: id
     }
   };
